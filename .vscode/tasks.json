@@ -43,7 +43,6 @@
             "type": "process",
             "args": [
                 "run",
-                "--no-build",
                 "--project",
                 "${workspaceFolder}/find-similar-images.csproj"
             ],
