@@ -11,6 +11,9 @@ public class BGRCrossCorrelation : IComparator {
     }
 
     private int ImgResizeValue { get; }
+    private readonly double HighSimilarity = 0.99;
+    private readonly double MediumSimilarity = 0.97;
+    private readonly double LowSimilarity = 0.9;
 
     public double Compare(Mat img1, Mat img2) {
         var pImg1 = ProcessImg(img1);
@@ -39,6 +42,19 @@ public class BGRCrossCorrelation : IComparator {
         ncc[2] /= Math.Sqrt(img1SquaredSum[2]) * Math.Sqrt(img2SquaredSum[2]);
         var nccAvg = ncc.Average();
         return nccAvg;
+    }
+
+    public bool IsSimilar(double similarity, Thresholds threshold) {
+        if (similarity >= HighSimilarity) {
+            return true;
+        }
+        if (threshold == Thresholds.medium && similarity >= MediumSimilarity) {
+            return true;
+        }
+        if (threshold == Thresholds.low && similarity >= LowSimilarity) {
+            return true;
+        }
+        return false;
     }
 
     /// <summary>
