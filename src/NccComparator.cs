@@ -1,12 +1,12 @@
 using OpenCvSharp;
 
 
-public class BGRCrossCorrelation : IComparator {
+public class NccComparator : IComparator {
     /// <summary>
     /// Compare images in normalized cross correlation, averaging three BGR NCC.
     /// The result value ranges 0~1 and high value means high similarity.
     /// </summary>
-    public BGRCrossCorrelation(int imgResizeValue = 128) {
+    public NccComparator(int imgResizeValue = 64) {
         ImgResizeValue = imgResizeValue;
     }
 
@@ -61,6 +61,9 @@ public class BGRCrossCorrelation : IComparator {
     /// Process the given image in the Comparator's own way to optimize for comparing.
     /// </summary>
     private Mat ProcessImg(Mat img) {
+        if (img.Size().Width == ImgResizeValue && img.Size().Height == ImgResizeValue) {
+            return img;
+        }
         var pImg = new Mat();
         Cv2.Resize(img, pImg, new Size(ImgResizeValue, ImgResizeValue), interpolation: InterpolationFlags.Area);
         return pImg;
