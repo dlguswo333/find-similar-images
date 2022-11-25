@@ -8,14 +8,21 @@ class ImgGetter {
         return imgPaths;
     }
 
-    public static string[] GetImgPaths(string path) {
+    public static string[] GetImgPaths(string path, bool recursive = true) {
         try {
             var filePaths = Directory.GetFiles(path);
             var imgPaths = FilterImgPaths(filePaths);
-            return imgPaths;
+            if (!recursive) {
+                return imgPaths;
+            }
+            var dirPaths = Directory.GetDirectories(path);
+            var tmpImgPaths = new List<string>(imgPaths);
+            foreach (var dirPath in dirPaths) {
+                tmpImgPaths.AddRange(GetImgPaths(dirPath, true));
+            }
+            return tmpImgPaths.ToArray();
         } catch {
             return Array.Empty<string>();
         }
     }
-
 }
