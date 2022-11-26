@@ -16,6 +16,7 @@ class MainProgram {
         }
         var path1 = parsedArgs.Value.Path1;
         var path2 = parsedArgs.Value.Path2;
+        var threshold = GetThresholds(parsedArgs.Value.Threshold);
         var comparator = InitComparator(parsedArgs.Value.Comp ?? defaultComparator);
 
         var watch = System.Diagnostics.Stopwatch.StartNew();
@@ -49,7 +50,7 @@ class MainProgram {
                 for (int j = i + 1; j < imgPaths.Length; ++j) {
                     var img2 = imgs[j];
                     var similarity = comparator.Compare(img1, img2);
-                    if (comparator.IsSimilar(similarity, Thresholds.high)) {
+                    if (comparator.IsSimilar(similarity, threshold)) {
                         Console.WriteLine($"{imgPaths[i]} {imgPaths[j]} {similarity}");
                     }
                 }
@@ -80,6 +81,19 @@ class MainProgram {
         return new MseComparator();
     }
 
+    private static Thresholds GetThresholds(string thresholdSpecifier) {
+        var thresholdMap = new Dictionary<string, Thresholds>(){
+            {"high", Thresholds.high},
+            {"medium", Thresholds.medium},
+            {"low", Thresholds.low}
+        };
+        if (!thresholdMap.ContainsKey(thresholdSpecifier)) {
+            Console.WriteLine($"Threshold argument is '{thresholdSpecifier}' which is not valid. Using 'high' instead.");
+            return Thresholds.high;
+        }
+        return thresholdMap[thresholdSpecifier];
+    }
+
     class Arguments {
         [Value(0, Required = true, MetaName = "Path1", HelpText = "Target Path. If you specify one paths, compare images in the same directory.")]
         public string Path1 { get; set; } = string.Empty;
@@ -94,5 +108,8 @@ class MainProgram {
 
         [Option('c', "comp", Default = defaultComparator, Required = false, HelpText = "Specify comparator. Possible values: mse, ncc.")]
         public string? Comp { get; set; }
+
+        [Option('t', "threshold", Default = "high", Required = false, HelpText = "Specify similarity threshold. Higher threshold compares images more strictly. Possible values: high, medium, low.")]
+        public string Threshold { get; set; } = string.Empty;
     }
 }
