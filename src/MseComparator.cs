@@ -16,13 +16,17 @@ public class MseComparator : IComparator {
     private readonly double LowSimilarity = 300;
 
     public double Compare(Mat img1, Mat img2) {
-        var pImg1 = ProcessImg(img1);
-        var pImg2 = ProcessImg(img2);
-        var diff = pImg1 - pImg2;
-        // Cv2.Sum(diff.Mul(diff)) is still an array of [b, g, r].
-        var squaredErrorSum = Cv2.Sum(Cv2.Sum(diff.Mul(diff))).ToDouble();
-        var mse = squaredErrorSum / (ImgResizeValue * ImgResizeValue) / 3;
-        return mse;
+        try {
+            var pImg1 = ProcessImg(img1);
+            var pImg2 = ProcessImg(img2);
+            var diff = pImg1 - pImg2;
+            // Cv2.Sum(diff.Mul(diff)) is still an array of [b, g, r].
+            var squaredErrorSum = Cv2.Sum(Cv2.Sum(diff.Mul(diff))).ToDouble();
+            var mse = squaredErrorSum / (ImgResizeValue * ImgResizeValue) / 3;
+            return mse;
+        } catch {
+            return LowSimilarity * 2;
+        }
     }
 
     public bool IsSimilar(double similarity, Thresholds threshold) {
