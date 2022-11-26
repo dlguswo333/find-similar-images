@@ -44,6 +44,10 @@ class MainProgram {
                 return -1;
             }
 
+            var totalPairCnt = imgPaths.Length * (imgPaths.Length - 1) / 2;
+            var progressBar = new ProgressBar("Comparing image pairs: ", totalPairCnt, 100);
+            var computedPairCnt = 0;
+
             Console.WriteLine($"Comparing {imgPaths.Length} images...");
             for (int i = 0; i < imgPaths.Length; ++i) {
                 var img1 = imgs[i];
@@ -53,6 +57,7 @@ class MainProgram {
                     if (comparator.IsSimilar(similarity, threshold)) {
                         outputter.AppendSimilarPair(imgPaths[i], imgPaths[j], similarity);
                     }
+                    progressBar.WriteProgress(++computedPairCnt, computedPairCnt == totalPairCnt);
                 }
             }
         } else {
@@ -85,6 +90,10 @@ class MainProgram {
                 return -1;
             }
 
+            var totalPairCnt = imgPaths1.Length * imgPaths2.Length;
+            var progressBar = new ProgressBar("Comparing image pairs: ", totalPairCnt, 100);
+            var computedPairCnt = 0;
+
             Console.WriteLine($"Comparing {imgs1.Length} and {imgs2.Length} images...");
             for (int i = 0; i < imgs1.Length; ++i) {
                 var img1 = imgs1[i];
@@ -95,6 +104,7 @@ class MainProgram {
                         if (comparator.IsSimilar(similarity, threshold)) {
                             outputter.AppendSimilarPair(imgPaths1[i], imgPaths2[j], similarity);
                         }
+                        progressBar.WriteProgress(++computedPairCnt, computedPairCnt == totalPairCnt);
                     } catch (Exception e) {
                         Console.WriteLine($"Comparing images failed: {imgPaths1[i]} {imgPaths2[j]}");
                         Console.WriteLine(e.ToString());
@@ -105,6 +115,8 @@ class MainProgram {
         }
 
         watch.Stop();
+        ProgressBar.ClearConoleLastLine();
+        Console.WriteLine();
         Console.WriteLine($"{watch.ElapsedMilliseconds} ms elapsed.");
         var dateNow = DateTime.Now;
         var outputFilePath = "./" + dateNow.ToString("yyyy_MM_dd_hh_mm_ss") + ".json";
