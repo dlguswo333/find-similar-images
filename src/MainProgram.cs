@@ -1,4 +1,4 @@
-﻿using OpenCvSharp;
+using OpenCvSharp;
 using CommandLine;
 
 public enum Thresholds {
@@ -17,6 +17,7 @@ class MainProgram {
         var path1 = parsedArgs.Value.Path1;
         var path2 = parsedArgs.Value.Path2;
         var threshold = GetThresholds(parsedArgs.Value.Threshold);
+        var recursive = parsedArgs.Value.Recursive;
         var comparator = InitComparator(parsedArgs.Value.Comp ?? defaultComparator);
 
         var watch = System.Diagnostics.Stopwatch.StartNew();
@@ -26,7 +27,7 @@ class MainProgram {
                 Console.WriteLine($"Given path does not exist or cannot be accessed: {path}");
                 return -1;
             }
-            var imgPaths = ImgGetter.GetImgPaths(path);
+            var imgPaths = ImgGetter.GetImgPaths(path, recursive ?? true);
             var exitFlag = ConsoleLogNumImgs(imgPaths.Length, path);
             if (exitFlag) {
                 return 0;
