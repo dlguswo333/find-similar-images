@@ -1,4 +1,4 @@
-using OpenCvSharp;
+﻿using OpenCvSharp;
 using CommandLine;
 
 public enum Thresholds {
@@ -28,7 +28,7 @@ class MainProgram {
                 return -1;
             }
             var imgPaths = ImgGetter.GetImgPaths(path, recursive ?? true);
-            var exitFlag = ConsoleLogNumImgs(imgPaths.Length, path);
+            var exitFlag = ConsoleLogNumImgs(imgPaths.Length, path, true);
             if (exitFlag) {
                 return 0;
             }
@@ -52,6 +52,53 @@ class MainProgram {
                     }
                 }
             }
+        } else {
+            var path1Exists = Directory.Exists(path1);
+            var path2Exists = Directory.Exists(path2);
+            if (!(path1Exists && path2Exists)) {
+                if (!path1Exists) {
+                    Console.WriteLine($"Given path does not exist or cannot be accessed: {path1}");
+                }
+                if (!path2Exists) {
+                    Console.WriteLine($"Given path does not exist or cannot be accessed: {path2}");
+                }
+                return -1;
+            }
+
+            var imgPaths1 = ImgGetter.GetImgPaths(path1, recursive ?? true);
+            var imgPaths2 = ImgGetter.GetImgPaths(path2, recursive ?? true);
+            var exitFlag1 = ConsoleLogNumImgs(imgPaths1.Length, path1, false);
+            var exitFlag2 = ConsoleLogNumImgs(imgPaths2.Length, path2, false);
+            if (exitFlag1 || exitFlag2) {
+                return 0;
+            }
+
+            Console.WriteLine($"Reading {imgPaths1.Length + imgPaths2.Length} images in memory...");
+            Mat[] imgs1, imgs2;
+            try {
+                imgs1 = ReadImgs(imgPaths1);
+                imgs2 = ReadImgs(imgPaths2);
+            } catch {
+                return -1;
+            }
+
+            Console.WriteLine($"Comparing {imgs1.Length} and {imgs2.Length} images...");
+            for (int i = 0; i < imgs1.Length; ++i) {
+                var img1 = imgs1[i];
+                for (int j = 0; j < imgs2.Length; ++j) {
+                    var img2 = imgs2[j];
+                    try {
+                        var similarity = comparator.Compare(img1, img2);
+                        if (comparator.IsSimilar(similarity, threshold)) {
+                            Console.WriteLine($"{imgPaths1[i]} {imgPaths2[j]} {similarity}");
+                        }
+                    } catch (Exception e) {
+                        Console.WriteLine($"Comparing images failed: {imgPaths1[i]} {imgPaths2[j]}");
+                        Console.WriteLine(e.ToString());
+                        return -1;
+                    }
+                }
+            }
         }
 
         watch.Stop();
@@ -59,12 +106,12 @@ class MainProgram {
         return 0;
     }
 
-    private static bool ConsoleLogNumImgs(int numImgs, string path) {
+    private static bool ConsoleLogNumImgs(int numImgs, string path, bool exitIfOneImg) {
         if (numImgs == 0) {
             Console.WriteLine($"No image exists in the given path: {path}");
             return true;
         }
-        if (numImgs == 1) {
+        if (exitIfOneImg && numImgs == 1) {
             Console.WriteLine($"Single image file has been found in the given path: {path}");
             return true;
         }
