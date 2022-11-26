@@ -34,15 +34,11 @@ class MainProgram {
             }
 
             Console.WriteLine($"Reading {imgPaths.Length} images in memory...");
-            var imgs = new Mat[imgPaths.Length];
-            for (int i = 0; i < imgPaths.Length; ++i) {
-                try {
-                    imgs[i] = Cv2.ImRead(imgPaths[i], ImreadModes.Color);
-                } catch (Exception e) {
-                    Console.WriteLine($"Failed to read a image: {imgPaths[i]}");
-                    Console.WriteLine(e.ToString());
-                    return -1;
-                }
+            Mat[] imgs;
+            try {
+                imgs = ReadImgs(imgPaths);
+            } catch {
+                return -1;
             }
 
             Console.WriteLine($"Comparing {imgPaths.Length} images...");
@@ -73,6 +69,20 @@ class MainProgram {
             return true;
         }
         return false;
+    }
+
+    private static Mat[] ReadImgs(string[] imgPaths) {
+        var imgs = new Mat[imgPaths.Length];
+        for (int i = 0; i < imgPaths.Length; ++i) {
+            try {
+                imgs[i] = Cv2.ImRead(imgPaths[i], ImreadModes.Color);
+            } catch (Exception e) {
+                Console.WriteLine($"Failed to read a image: {imgPaths[i]}");
+                Console.WriteLine(e.ToString());
+                throw;
+            }
+        }
+        return imgs;
     }
 
     private static IComparator InitComparator(string compSpecifier) {
