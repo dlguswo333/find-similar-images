@@ -16,9 +16,12 @@ class MainProgram {
         }
         var path1 = parsedArgs.Value.Path1;
         var path2 = parsedArgs.Value.Path2;
-        var threshold = GetThresholds(parsedArgs.Value.Threshold);
+        var thresholdSpecifier = parsedArgs.Value.Threshold;
+        var threshold = GetThresholds(thresholdSpecifier);
         var recursive = parsedArgs.Value.Recursive;
-        var comparator = InitComparator(parsedArgs.Value.Comp ?? defaultComparator);
+        var compSpecifier = parsedArgs.Value.Comp ?? defaultComparator;
+        var comparator = InitComparator(compSpecifier);
+        var outputter = new JsonOutputter(compSpecifier, thresholdSpecifier);
 
         var watch = System.Diagnostics.Stopwatch.StartNew();
         if (path2 == null) {
@@ -48,7 +51,7 @@ class MainProgram {
                     var img2 = imgs[j];
                     var similarity = comparator.Compare(img1, img2);
                     if (comparator.IsSimilar(similarity, threshold)) {
-                        Console.WriteLine($"{imgPaths[i]} {imgPaths[j]} {similarity}");
+                        outputter.AppendSimilarPair(imgPaths[i], imgPaths[j], similarity);
                     }
                 }
             }
@@ -90,7 +93,7 @@ class MainProgram {
                     try {
                         var similarity = comparator.Compare(img1, img2);
                         if (comparator.IsSimilar(similarity, threshold)) {
-                            Console.WriteLine($"{imgPaths1[i]} {imgPaths2[j]} {similarity}");
+                            outputter.AppendSimilarPair(imgPaths1[i], imgPaths2[j], similarity);
                         }
                     } catch (Exception e) {
                         Console.WriteLine($"Comparing images failed: {imgPaths1[i]} {imgPaths2[j]}");
@@ -103,6 +106,13 @@ class MainProgram {
 
         watch.Stop();
         Console.WriteLine($"{watch.ElapsedMilliseconds} ms elapsed.");
+        var dateNow = DateTime.Now;
+        var outputFilePath = "./" + dateNow.ToString("yyyy_MM_dd_hh_mm_ss") + ".json";
+        if (outputter.WriteSerializedResult(outputFilePath)) {
+            Console.WriteLine($"Output file has been written at the path: {outputFilePath}");
+        } else {
+            return -1;
+        }
         return 0;
     }
 
