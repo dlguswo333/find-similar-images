@@ -39,7 +39,7 @@ class MainProgram {
             Console.WriteLine($"Reading {imgPaths.Length} images in memory...");
             Mat[] imgs;
             try {
-                imgs = ReadImgs(imgPaths);
+                imgs = ReadAndProcessImgs(imgPaths, comparator.ProcessImg);
             } catch {
                 return -1;
             }
@@ -84,8 +84,8 @@ class MainProgram {
             Console.WriteLine($"Reading {imgPaths1.Length + imgPaths2.Length} images in memory...");
             Mat[] imgs1, imgs2;
             try {
-                imgs1 = ReadImgs(imgPaths1);
-                imgs2 = ReadImgs(imgPaths2);
+                imgs1 = ReadAndProcessImgs(imgPaths1, comparator.ProcessImg);
+                imgs2 = ReadAndProcessImgs(imgPaths2, comparator.ProcessImg);
             } catch {
                 return -1;
             }
@@ -140,11 +140,18 @@ class MainProgram {
         return false;
     }
 
-    private static Mat[] ReadImgs(string[] imgPaths) {
+    /// <summary>
+    /// Read images located at imgPaths array and process the images.
+    /// </summary>
+    private static Mat[] ReadAndProcessImgs(string[] imgPaths, Func<Mat, Mat> processImg) {
         var imgs = new Mat[imgPaths.Length];
         for (int i = 0; i < imgPaths.Length; ++i) {
             try {
                 imgs[i] = Cv2.ImRead(imgPaths[i], ImreadModes.Color);
+                var tmp = processImg(imgs[i]);
+                // Release right after process to reduce memory usage.
+                imgs[i].Release();
+                imgs[i] = tmp;
             } catch (Exception e) {
                 Console.WriteLine($"Failed to read a image: {imgPaths[i]}");
                 Console.WriteLine(e.ToString());
