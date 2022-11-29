@@ -64,11 +64,14 @@ public class NccComparator : IComparator {
     /// <summary>
     /// Process the given image in the Comparator's own way to optimize for comparing.
     /// </summary>
-    private Mat ProcessImg(Mat img) {
+    public Mat ProcessImg(Mat img) {
         if (img.Size().Width == ImgResizeValue && img.Size().Height == ImgResizeValue) {
             return img;
         }
         var pImg = new Mat();
+        if (img.Empty()) {
+            return pImg;
+        }
         Cv2.Resize(img, pImg, new Size(ImgResizeValue, ImgResizeValue), interpolation: InterpolationFlags.Area);
         return pImg;
     }
