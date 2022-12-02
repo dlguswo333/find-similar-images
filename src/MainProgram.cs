@@ -22,6 +22,7 @@ class MainProgram {
         var compSpecifier = parsedArgs.Value.Comp ?? defaultComparator;
         var comparator = InitComparator(compSpecifier);
         var outputter = new JsonOutputter(compSpecifier, thresholdSpecifier);
+        var similarPairCnt = 0;
 
         var watch = System.Diagnostics.Stopwatch.StartNew();
         if (path2 == null) {
@@ -56,6 +57,7 @@ class MainProgram {
                     var similarity = comparator.Compare(img1, img2);
                     if (comparator.IsSimilar(similarity, threshold)) {
                         outputter.AppendSimilarPair(imgPaths[i], imgPaths[j], similarity);
+                        ++similarPairCnt;
                     }
                     progressBar.WriteProgress(++computedPairCnt, computedPairCnt == totalPairCnt);
                 }
@@ -103,6 +105,7 @@ class MainProgram {
                         var similarity = comparator.Compare(img1, img2);
                         if (comparator.IsSimilar(similarity, threshold)) {
                             outputter.AppendSimilarPair(imgPaths1[i], imgPaths2[j], similarity);
+                            ++similarPairCnt;
                         }
                         progressBar.WriteProgress(++computedPairCnt, computedPairCnt == totalPairCnt);
                     } catch (Exception e) {
@@ -117,10 +120,11 @@ class MainProgram {
         watch.Stop();
         ProgressBar.ClearConoleLastLine();
         Console.WriteLine();
-        Console.WriteLine($"{watch.ElapsedMilliseconds} ms elapsed.");
+        Console.WriteLine($"{FormatTimeSpan(watch.Elapsed)} elapsed.");
         var dateNow = DateTime.Now;
         var outputFilePath = "./" + dateNow.ToString("yyyy_MM_dd_hh_mm_ss") + ".json";
         if (outputter.WriteSerializedResult(outputFilePath)) {
+            Console.WriteLine($"Number of similar pairs: {similarPairCnt} pairs");
             Console.WriteLine($"Output file has been written at the path: {outputFilePath}");
         } else {
             return -1;
@@ -179,6 +183,14 @@ class MainProgram {
             return Thresholds.high;
         }
         return thresholdMap[thresholdSpecifier];
+    }
+
+    private static string FormatTimeSpan(TimeSpan timeSpan) {
+        var milliSeconds = timeSpan.TotalMilliseconds;
+        if (milliSeconds > 1e3) {
+            return $"{milliSeconds / 1e3:0.0} seconds";
+        }
+        return $"{milliSeconds} milliseconds";
     }
 
     class Arguments {
