@@ -1,4 +1,5 @@
 using System.Text.Json;
+using System.Text.Unicode;
 
 class JsonOutputter {
     // In each class to be serialized, if not set getter, the property will not be serialized.
@@ -38,7 +39,10 @@ class JsonOutputter {
         MyOutput.Threshold = threshold;
         serializerOptions = new JsonSerializerOptions {
             PropertyNamingPolicy = JsonNamingPolicy.CamelCase,
-            WriteIndented = true
+            WriteIndented = true,
+            // Unescape non-ASCII characters.
+            // https://learn.microsoft.com/en-us/dotnet/standard/serialization/system-text-json/character-encoding
+            Encoder = System.Text.Encodings.Web.JavaScriptEncoder.Create(UnicodeRanges.All),
         };
     }
 
