@@ -10,7 +10,12 @@ The program is inspired and influenced by [difPy][difPy].
 - Two folder path comparision.
 - Output in JSON formatted file.
 
+## TODO
+- Support rotation.
+
 ## How to Execute
+⚠️ FSI requires **.NET 6.0 Runtime** installed to run.
+
 ```shell
 ./find-similar-images {PATH} [{SECOND_PATH}] [-r|--recursive {RECURSIVE}] [-c|comp {COMPARATOR}] [-t|--threshold {THRESHOLD}]
 ```
@@ -22,9 +27,6 @@ If you want to compare images between two directories with NCC comparator, do th
 ```shell
 ./find-similar-images ~/images-1 ~/images-2 -c ncc
 ```
-
-## TODO
-- Support rotation.
 
 ## Output
 FSI outputs the result in JSON format file in current working directory.
@@ -70,6 +72,12 @@ Here are a few things to note:
 That means if none of images are considered to be similar, the result is an empty array.
 2. Higher similarity value does not necessarily means the images are considered similar.
 Similarity is dependent on comparators. Also, the similarity range varies according to what comparator is used.
+
+## Develop
+### How to Build Release Version
+```shell
+dotnet build -c Release --runtime win-x64 --self-contained false
+```
 
 
 [difPy]: https://github.com/elisemercury/Duplicate-Image-Finder
