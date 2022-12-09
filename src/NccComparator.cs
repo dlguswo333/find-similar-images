@@ -19,30 +19,18 @@ public class NccComparator : IComparator {
         try {
             var pImg1 = ProcessImg(img1);
             var pImg2 = ProcessImg(img2);
-            // Refer https://github.com/shimat/opencvsharp/wiki/Accessing-Pixel
-            var indexer1 = pImg1.GetGenericIndexer<Vec3b>();
-            var indexer2 = pImg2.GetGenericIndexer<Vec3b>();
-            var ncc = new double[3];
-            var img1SquaredSum = new long[3];
-            var img2SquaredSum = new long[3];
-            for (int i = 0; i < ImgResizeValue; ++i) {
-                for (int j = 0; j < ImgResizeValue; ++j) {
-                    ncc[0] += indexer1[i, j][0] * indexer2[i, j][0];
-                    ncc[1] += indexer1[i, j][1] * indexer2[i, j][1];
-                    ncc[2] += indexer1[i, j][2] * indexer2[i, j][2];
-                    img1SquaredSum[0] += indexer1[i, j][0] * indexer1[i, j][0];
-                    img1SquaredSum[1] += indexer1[i, j][1] * indexer1[i, j][1];
-                    img1SquaredSum[2] += indexer1[i, j][2] * indexer1[i, j][2];
-                    img2SquaredSum[0] += indexer2[i, j][0] * indexer2[i, j][0];
-                    img2SquaredSum[1] += indexer2[i, j][1] * indexer2[i, j][1];
-                    img2SquaredSum[2] += indexer2[i, j][2] * indexer2[i, j][2];
-                }
+            // Use NCC, appears in the link below.
+            // https://www.researchgate.net/publication/2378357_Fast_Normalized_Cross-Correlation
+            pImg1 = pImg1 - Cv2.Mean(pImg1);
+            pImg2 = pImg2 - Cv2.Mean(pImg2);
+            var img1SquaredSum = Cv2.Sum(pImg1.Mul(pImg1));
+            var img2SquaredSum = Cv2.Sum(pImg2.Mul(pImg2));
+            var imgMul = Cv2.Sum(pImg1.Mul(pImg2));
+            var nccSum = 0.0d;
+            for (int i = 0; i < 3; ++i) {
+                nccSum += imgMul[i] / Math.Sqrt(img1SquaredSum[i] * img2SquaredSum[i]);
             }
-            ncc[0] /= Math.Sqrt(img1SquaredSum[0]) * Math.Sqrt(img2SquaredSum[0]);
-            ncc[1] /= Math.Sqrt(img1SquaredSum[1]) * Math.Sqrt(img2SquaredSum[1]);
-            ncc[2] /= Math.Sqrt(img1SquaredSum[2]) * Math.Sqrt(img2SquaredSum[2]);
-            var nccAvg = ncc.Average();
-            return nccAvg;
+            return nccSum / 3;
         } catch {
             return LowSimilarity / 2;
         }
@@ -73,6 +61,7 @@ public class NccComparator : IComparator {
             return pImg;
         }
         Cv2.Resize(img, pImg, new Size(ImgResizeValue, ImgResizeValue), interpolation: InterpolationFlags.Area);
+        pImg.ConvertTo(pImg, MatType.CV_32FC3);
         return pImg;
     }
 }
