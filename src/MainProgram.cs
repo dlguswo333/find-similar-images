@@ -121,13 +121,17 @@ class MainProgram {
         ProgressBar.ClearConoleLastLine();
         Console.WriteLine();
         Console.WriteLine($"{FormatTimeSpan(watch.Elapsed)} elapsed.");
-        var dateNow = DateTime.Now;
-        var outputFilePath = "./" + dateNow.ToString("yyyy_MM_dd_hh_mm_ss") + ".json";
-        if (outputter.WriteSerializedResult(outputFilePath)) {
-            Console.WriteLine($"Number of similar pairs: {similarPairCnt} pairs");
-            Console.WriteLine($"Output file has been written at the path: {outputFilePath}");
+        if (parsedArgs.Value.Output == null) {
+            Console.WriteLine($"Number of similar pairs: {similarPairCnt} pairs\n");
+            outputter.WriteResultToConsole();
         } else {
-            return -1;
+            var outputFilePath = "./" + parsedArgs.Value.Output;
+            if (outputter.WriteResultToFile(outputFilePath)) {
+                Console.WriteLine($"Number of similar pairs: {similarPairCnt} pairs");
+                Console.WriteLine($"Output file has been written at the path: {outputFilePath}");
+            } else {
+                return -1;
+            }
         }
         return 0;
     }
@@ -210,5 +214,8 @@ class MainProgram {
 
         [Option('t', "threshold", Default = "high", Required = false, HelpText = "Specify similarity threshold. Higher threshold compares images more strictly. Possible values: high, medium, low.")]
         public string Threshold { get; set; } = string.Empty;
+
+        [Option('o', "output", Default = null, Required = false, HelpText = "Specify output file name. Write to console if not given.")]
+        public string? Output { get; set; }
     }
 }
