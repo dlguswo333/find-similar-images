@@ -56,6 +56,14 @@ class JsonOutputter {
         }
     }
 
+    /// <summary>
+    /// Write the output to console.
+    /// </summary>
+    public void WriteResultToConsole() {
+        var serializedOutput = JsonSerializer.Serialize(MyOutput, serializerOptions);
+        Console.WriteLine(serializedOutput);
+    }
+
     /// <Summary>
     /// Write the output to the given path.
     /// Returns a bool whether write process finished successfully or not.
