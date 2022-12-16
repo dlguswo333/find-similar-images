@@ -56,11 +56,19 @@ class JsonOutputter {
         }
     }
 
-    /// <Summary>
+    /// <summary>
+    /// Write the output to console.
+    /// </summary>
+    public void WriteResultToConsole() {
+        var serializedOutput = JsonSerializer.Serialize(MyOutput, serializerOptions);
+        Console.WriteLine(serializedOutput);
+    }
+
+    /// <summary>
     /// Write the output to the given path.
     /// Returns a bool whether write process finished successfully or not.
-    /// </Summary>
-    public bool WriteSerializedResult(string path) {
+    /// </summary>
+    public bool WriteResultToFile(string path) {
         if (File.Exists(path) || Directory.Exists(path)) {
             Console.WriteLine($"Output file already exists, cannot overwrite: {path}");
             return false;
