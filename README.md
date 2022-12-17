@@ -29,7 +29,8 @@ If you want to compare images between two directories with NCC comparator, do th
 ```
 
 ## Output
-FSI outputs the result in JSON format file in current working directory.
+FSI outputs the result in JSON format and it will write the result to a file if you specify the file name,
+or write to console.
 The format of the JSON file is the following:
 ```json
 {
@@ -77,6 +78,11 @@ Similarity is dependent on comparators. Also, the similarity range varies accord
 ### How to Build Release Version
 ```shell
 dotnet build -c Release --runtime win-x64 --self-contained false
+```
+
+### Naming a Build Output Zip File
+```text
+find-similar-images-v{VERSION}-{OS-ARCH}.zip
 ```
 
 
