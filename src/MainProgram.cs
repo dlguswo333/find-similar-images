@@ -1,4 +1,4 @@
-﻿using OpenCvSharp;
+using OpenCvSharp;
 using CommandLine;
 
 public enum Thresholds {
@@ -195,6 +195,18 @@ class MainProgram {
             return $"{milliSeconds / 1e3:0.0} seconds";
         }
         return $"{milliSeconds} milliseconds";
+    }
+
+    /// <summary>
+    /// Resolve the given path to full path, replacing '~' if given at the start with user home directory.
+    /// </summary>
+    public static string ResolvePath(string path) {
+        if (path.Length > 0 && path[0] == '~') {
+            //Resolve tilde path to current user home directory.
+            var homeDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            return string.Concat(homeDirectory, path.AsSpan(1));
+        }
+        return Path.GetFullPath(path);
     }
 
     class Arguments {
