@@ -1,4 +1,4 @@
-using OpenCvSharp;
+﻿using OpenCvSharp;
 using CommandLine;
 
 public enum Thresholds {
@@ -121,18 +121,20 @@ class MainProgram {
         ProgressBar.ClearConoleLastLine();
         Console.WriteLine();
         Console.WriteLine($"{FormatTimeSpan(watch.Elapsed)} elapsed.");
-        if (parsedArgs.Value.Output == null) {
-            Console.WriteLine($"Number of similar pairs: {similarPairCnt} pairs\n");
-            outputter.WriteResultToConsole();
-        } else {
-            var outputFilePath = "./" + parsedArgs.Value.Output;
-            if (outputter.WriteResultToFile(outputFilePath)) {
-                Console.WriteLine($"Number of similar pairs: {similarPairCnt} pairs");
-                Console.WriteLine($"Output file has been written at the path: {outputFilePath}");
-            } else {
-                return -1;
+        Console.WriteLine($"Number of similar pairs: {similarPairCnt} pairs\n");
+        if (parsedArgs.Value.Output != null) {
+            string? resolvedOutputPath = null;
+            try {
+                resolvedOutputPath = ResolvePath(parsedArgs.Value.Output);
+            } catch (Exception) {
+                Console.WriteLine($"Could not resolve the given path: {parsedArgs.Value.Output}");
+            }
+            if (resolvedOutputPath != null && outputter.WriteResultToFile(resolvedOutputPath)) {
+                Console.WriteLine($"Output file has been written at the path: {resolvedOutputPath}");
+                return 0;
             }
         }
+        outputter.WriteResultToConsole();
         return 0;
     }
 
