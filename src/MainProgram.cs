@@ -121,18 +121,20 @@ class MainProgram {
         ProgressBar.ClearConoleLastLine();
         Console.WriteLine();
         Console.WriteLine($"{FormatTimeSpan(watch.Elapsed)} elapsed.");
-        if (parsedArgs.Value.Output == null) {
-            Console.WriteLine($"Number of similar pairs: {similarPairCnt} pairs\n");
-            outputter.WriteResultToConsole();
-        } else {
-            var outputFilePath = "./" + parsedArgs.Value.Output;
-            if (outputter.WriteResultToFile(outputFilePath)) {
-                Console.WriteLine($"Number of similar pairs: {similarPairCnt} pairs");
-                Console.WriteLine($"Output file has been written at the path: {outputFilePath}");
-            } else {
-                return -1;
+        Console.WriteLine($"Number of similar pairs: {similarPairCnt} pairs\n");
+        if (parsedArgs.Value.Output != null) {
+            string? resolvedOutputPath = null;
+            try {
+                resolvedOutputPath = ResolvePath(parsedArgs.Value.Output);
+            } catch (Exception) {
+                Console.WriteLine($"Could not resolve the given path: {parsedArgs.Value.Output}");
+            }
+            if (resolvedOutputPath != null && outputter.WriteResultToFile(resolvedOutputPath)) {
+                Console.WriteLine($"Output file has been written at the path: {resolvedOutputPath}");
+                return 0;
             }
         }
+        outputter.WriteResultToConsole();
         return 0;
     }
 
@@ -195,6 +197,18 @@ class MainProgram {
             return $"{milliSeconds / 1e3:0.0} seconds";
         }
         return $"{milliSeconds} milliseconds";
+    }
+
+    /// <summary>
+    /// Resolve the given path to full path, replacing '~' if given at the start with user home directory.
+    /// </summary>
+    public static string ResolvePath(string path) {
+        if (path.Length > 0 && path[0] == '~') {
+            //Resolve tilde path to current user home directory.
+            var homeDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+            return string.Concat(homeDirectory, path.AsSpan(1));
+        }
+        return Path.GetFullPath(path);
     }
 
     class Arguments {
