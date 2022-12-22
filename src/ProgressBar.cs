@@ -18,12 +18,12 @@ class ProgressBar {
             return;
         }
         var percentage = (int)((double)current / Total * 100);
-        ClearConoleLastLine();
+        ClearConsoleLastLine();
         Console.Write($"{PrefixText} [{current}/{Total}] {percentage}%");
         LastLogDateTime = DateTime.UtcNow;
     }
 
-    public static void ClearConoleLastLine() {
+    public static void ClearConsoleLastLine() {
         Console.SetCursorPosition(0, Console.CursorTop);
     }
 }

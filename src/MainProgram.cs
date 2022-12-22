@@ -118,7 +118,7 @@ class MainProgram {
         }
 
         watch.Stop();
-        ProgressBar.ClearConoleLastLine();
+        ProgressBar.ClearConsoleLastLine();
         Console.WriteLine();
         Console.WriteLine($"{FormatTimeSpan(watch.Elapsed)} elapsed.");
         Console.WriteLine($"Number of similar pairs: {similarPairCnt} pairs\n");
