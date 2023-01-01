@@ -9,13 +9,16 @@ public enum Thresholds {
 
 class MainProgram {
     const string defaultComparator = "mse";
+    private static string homeDirectory = string.Empty;
+
     static int Main(string[] args) {
         var parsedArgs = Parser.Default.ParseArguments<Arguments>(args);
         if (parsedArgs.Errors.Any()) {
             return -1;
         }
-        var path1 = parsedArgs.Value.Path1;
-        var path2 = parsedArgs.Value.Path2;
+        homeDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        var inputPath1 = parsedArgs.Value.Path1;
+        var inputPath2 = parsedArgs.Value.Path2;
         var thresholdSpecifier = parsedArgs.Value.Threshold;
         var threshold = GetThresholds(thresholdSpecifier);
         var recursive = parsedArgs.Value.Recursive;
@@ -25,8 +28,8 @@ class MainProgram {
         var similarPairCnt = 0;
 
         var watch = System.Diagnostics.Stopwatch.StartNew();
-        if (path2 == null) {
-            var path = path1;
+        if (inputPath2 == null) {
+            var path = ResolvePath(inputPath1);
             if (!Directory.Exists(path)) {
                 Console.WriteLine($"Given path does not exist or cannot be accessed: {path}");
                 return -1;
@@ -52,25 +55,29 @@ class MainProgram {
             Console.WriteLine($"Comparing {imgPaths.Length} images...");
             for (int i = 0; i < imgPaths.Length; ++i) {
                 var img1 = imgs[i];
+                var img1OriginalPath = GetOriginalPath(imgPaths[i], inputPath1);
                 for (int j = i + 1; j < imgPaths.Length; ++j) {
                     var img2 = imgs[j];
                     var similarity = comparator.Compare(img1, img2);
                     if (comparator.IsSimilar(similarity, threshold)) {
-                        outputter.AppendSimilarPair(imgPaths[i], imgPaths[j], similarity);
+                        var img2OriginalPath = GetOriginalPath(imgPaths[j], inputPath1);
+                        outputter.AppendSimilarPair(img1OriginalPath, img2OriginalPath, similarity);
                         ++similarPairCnt;
                     }
                     progressBar.WriteProgress(++computedPairCnt, computedPairCnt == totalPairCnt);
                 }
             }
         } else {
+            var path1 = ResolvePath(inputPath1);
+            var path2 = ResolvePath(inputPath2);
             var path1Exists = Directory.Exists(path1);
             var path2Exists = Directory.Exists(path2);
             if (!(path1Exists && path2Exists)) {
                 if (!path1Exists) {
-                    Console.WriteLine($"Given path does not exist or cannot be accessed: {path1}");
+                    Console.WriteLine($"Given path does not exist or cannot be accessed: {inputPath1}");
                 }
                 if (!path2Exists) {
-                    Console.WriteLine($"Given path does not exist or cannot be accessed: {path2}");
+                    Console.WriteLine($"Given path does not exist or cannot be accessed: {inputPath2}");
                 }
                 return -1;
             }
@@ -99,12 +106,14 @@ class MainProgram {
             Console.WriteLine($"Comparing {imgs1.Length} and {imgs2.Length} images...");
             for (int i = 0; i < imgs1.Length; ++i) {
                 var img1 = imgs1[i];
+                var img1OriginalPath = GetOriginalPath(imgPaths1[i], inputPath1);
                 for (int j = 0; j < imgs2.Length; ++j) {
                     var img2 = imgs2[j];
                     try {
                         var similarity = comparator.Compare(img1, img2);
                         if (comparator.IsSimilar(similarity, threshold)) {
-                            outputter.AppendSimilarPair(imgPaths1[i], imgPaths2[j], similarity);
+                            var img2OriginalPath = GetOriginalPath(imgPaths2[j], inputPath2);
+                            outputter.AppendSimilarPair(img1OriginalPath, img2OriginalPath, similarity);
                             ++similarPairCnt;
                         }
                         progressBar.WriteProgress(++computedPairCnt, computedPairCnt == totalPairCnt);
@@ -205,10 +214,19 @@ class MainProgram {
     public static string ResolvePath(string path) {
         if (path.Length > 0 && path[0] == '~') {
             //Resolve tilde path to current user home directory.
-            var homeDirectory = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
             return string.Concat(homeDirectory, path.AsSpan(1));
         }
         return Path.GetFullPath(path);
+    }
+
+    /// <summary>
+    /// Convert the resolved path relative to input path.
+    /// That is, GetOriginalPath(ResolvePath(path), path) = path
+    /// Also, GetOriginalPath(ResolvePath(path)+'/img.png', path) = path+'/img.png'
+    /// </summary>
+    public static string GetOriginalPath(string resolvedPath, string inputPath) {
+        var resolvedInputPath = ResolvePath(inputPath);
+        return resolvedPath.Replace(resolvedInputPath, inputPath);
     }
 
     class Arguments {
