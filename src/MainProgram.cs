@@ -55,12 +55,12 @@ class MainProgram {
             Console.WriteLine($"Comparing {imgPaths.Length} images...");
             for (int i = 0; i < imgPaths.Length; ++i) {
                 var img1 = imgs[i];
-                var img1OriginalPath = GetOriginalPath(imgPaths[i], inputPath1);
+                var img1OriginalPath = GetOriginalPath(imgPaths[i], inputPath1, path);
                 for (int j = i + 1; j < imgPaths.Length; ++j) {
                     var img2 = imgs[j];
                     var similarity = comparator.Compare(img1, img2);
                     if (comparator.IsSimilar(similarity, threshold)) {
-                        var img2OriginalPath = GetOriginalPath(imgPaths[j], inputPath1);
+                        var img2OriginalPath = GetOriginalPath(imgPaths[j], inputPath1, path);
                         outputter.AppendSimilarPair(img1OriginalPath, img2OriginalPath, similarity);
                         ++similarPairCnt;
                     }
@@ -106,13 +106,13 @@ class MainProgram {
             Console.WriteLine($"Comparing {imgs1.Length} and {imgs2.Length} images...");
             for (int i = 0; i < imgs1.Length; ++i) {
                 var img1 = imgs1[i];
-                var img1OriginalPath = GetOriginalPath(imgPaths1[i], inputPath1);
+                var img1OriginalPath = GetOriginalPath(imgPaths1[i], inputPath1, path1);
                 for (int j = 0; j < imgs2.Length; ++j) {
                     var img2 = imgs2[j];
                     try {
                         var similarity = comparator.Compare(img1, img2);
                         if (comparator.IsSimilar(similarity, threshold)) {
-                            var img2OriginalPath = GetOriginalPath(imgPaths2[j], inputPath2);
+                            var img2OriginalPath = GetOriginalPath(imgPaths2[j], inputPath2, path2);
                             outputter.AppendSimilarPair(img1OriginalPath, img2OriginalPath, similarity);
                             ++similarPairCnt;
                         }
@@ -224,8 +224,7 @@ class MainProgram {
     /// That is, GetOriginalPath(ResolvePath(path), path) = path
     /// Also, GetOriginalPath(ResolvePath(path)+'/img.png', path) = path+'/img.png'
     /// </summary>
-    public static string GetOriginalPath(string resolvedPath, string inputPath) {
-        var resolvedInputPath = ResolvePath(inputPath);
+    public static string GetOriginalPath(string resolvedPath, string inputPath, string resolvedInputPath) {
         return resolvedPath.Replace(resolvedInputPath, inputPath);
     }
 
