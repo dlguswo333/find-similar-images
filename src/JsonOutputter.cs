@@ -47,6 +47,8 @@ class JsonOutputter {
     }
 
     public void AppendSimilarPair(string imgPath1, string imgPath2, double similarity) {
+        imgPath1 = imgPath1.Replace('\\', '/');
+        imgPath2 = imgPath2.Replace('\\', '/');
         var similarImg = new SimilarImage(Path.GetFileName(imgPath2), imgPath2, similarity);
         if (MyOutput.Result.ContainsKey(imgPath1)) {
             MyOutput.Result[imgPath1].SimilarImages.Add(similarImg);
