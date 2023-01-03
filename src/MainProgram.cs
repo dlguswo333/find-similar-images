@@ -61,7 +61,7 @@ class MainProgram {
                     var similarity = comparator.Compare(img1, img2);
                     if (comparator.IsSimilar(similarity, threshold)) {
                         var img2OriginalPath = GetOriginalPath(imgPaths[j], inputPath1, path);
-                        outputter.AppendSimilarPair(img1OriginalPath, img2OriginalPath, similarity);
+                        outputter.AppendSimilarPair(img1OriginalPath, img2OriginalPath, imgPaths[i], imgPaths[j], similarity);
                         ++similarPairCnt;
                     }
                     progressBar.WriteProgress(++computedPairCnt, computedPairCnt == totalPairCnt);
@@ -113,7 +113,7 @@ class MainProgram {
                         var similarity = comparator.Compare(img1, img2);
                         if (comparator.IsSimilar(similarity, threshold)) {
                             var img2OriginalPath = GetOriginalPath(imgPaths2[j], inputPath2, path2);
-                            outputter.AppendSimilarPair(img1OriginalPath, img2OriginalPath, similarity);
+                            outputter.AppendSimilarPair(img1OriginalPath, img2OriginalPath, imgPaths1[i], imgPaths2[j], similarity);
                             ++similarPairCnt;
                         }
                         progressBar.WriteProgress(++computedPairCnt, computedPairCnt == totalPairCnt);
