@@ -107,7 +107,7 @@ Similarity is dependent on comparators. Also, the similarity range varies accord
 ## Develop
 ### How to Build Release Version
 ```shell
-dotnet build -c Release --runtime win-x64 --self-contained false
+dotnet publish -c Release --runtime win-x64 --self-contained false
 ```
 
 ### Naming a Build Output Zip File
