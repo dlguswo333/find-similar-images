@@ -1,5 +1,6 @@
 using OpenCvSharp;
 
+namespace FSI;
 
 public class NccComparator : IComparator {
     /// <summary>

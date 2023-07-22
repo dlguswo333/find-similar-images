@@ -1,6 +1,8 @@
 ﻿using OpenCvSharp;
 using CommandLine;
 
+namespace FSI;
+
 public enum Thresholds {
     low,
     medium,
