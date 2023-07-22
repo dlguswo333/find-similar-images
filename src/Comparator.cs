@@ -1,5 +1,7 @@
 using OpenCvSharp;
 
+namespace FSI;
+
 interface IComparator {
     public double Compare(Mat img1, Mat img2);
 
