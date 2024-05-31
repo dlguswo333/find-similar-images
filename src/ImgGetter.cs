@@ -1,6 +1,6 @@
 class ImgGetter {
     private static readonly string[] imgExts = {
-        "jpeg", "jpg", "jfif", "png", "webp", "bmp"
+        "jpeg", "jpg", "jfif", "png", "webp", "bmp", "tiff", "tif", "avif",
     };
 
     private static string[] FilterImgPaths(string[] filePaths) {
