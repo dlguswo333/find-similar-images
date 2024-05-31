@@ -4,7 +4,9 @@ class ImgGetter {
     };
 
     private static string[] FilterImgPaths(string[] filePaths) {
-        var imgPaths = filePaths.Where(path => imgExts.Any(ext => path.EndsWith("." + ext))).ToArray();
+        var imgPaths = filePaths
+            .Where(path => imgExts.Any(ext => Path.GetExtension(path)?.ToLower() == "." + ext))
+            .ToArray();
         return imgPaths;
     }
 
