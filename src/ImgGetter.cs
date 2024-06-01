@@ -1,10 +1,12 @@
 class ImgGetter {
     private static readonly string[] imgExts = {
-        "jpeg", "jpg", "jfif", "png", "webp", "bmp"
+        "jpeg", "jpg", "jfif", "png", "webp", "bmp", "tiff", "tif", "avif",
     };
 
     private static string[] FilterImgPaths(string[] filePaths) {
-        var imgPaths = filePaths.Where(path => imgExts.Any(ext => path.EndsWith("." + ext))).ToArray();
+        var imgPaths = filePaths
+            .Where(path => imgExts.Any(ext => Path.GetExtension(path)?.ToLower() == "." + ext))
+            .ToArray();
         return imgPaths;
     }
 

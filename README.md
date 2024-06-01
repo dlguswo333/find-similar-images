@@ -4,6 +4,8 @@ and outputs results in JSON format.
 
 The program is inspired and influenced by [difPy][difPy].
 
+The program uses [libavif][libavif] for reading avif image files.
+
 ## Features
 - Set various options through arguments.
 - Recursive image file search in subdirectory.
@@ -104,7 +106,26 @@ That means if none of images are considered to be similar, the result is an empt
 Lower similarity may imply that the two images are deemed to be similar.
 Similarity is dependent on comparators. Also, the similarity range varies according to what comparator is used.
 
-## Develop
+## Development
+### Custom opencv Build
+In order to support avif image formats, FSI uses custom opencv build.
+For that, you need to install OpencvSharp4.runtime.\* packages from the link.
+
+https://github.com/dlguswo333/opencvsharp/releases
+
+Download and install the nupkg files so that FSI uses the custom builds of OpencvSharp4.runtime.
+One of the ways to install from nupkg files is the following.
+
+```shell
+dotnet tool install --global --add-source <path-to-your-nuget-package> <tool-name>
+```
+
+Another way is to place the nupkg files and specify the folder path when restoring.
+
+```shell
+dotnet restore --source <path-to-your-nuget-package> --source https://api.nuget.org/v3/index.json
+```
+
 ### How to Build Release Version
 ```shell
 dotnet publish -c Release --runtime win-x64 --self-contained false
@@ -117,3 +138,4 @@ find-similar-images-v{VERSION}-{OS-ARCH}.zip
 
 
 [difPy]: https://github.com/elisemercury/Duplicate-Image-Finder
+[libavif]: https://github.com/AOMediaCodec/libavif
