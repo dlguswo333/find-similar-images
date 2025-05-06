@@ -1,9 +1,11 @@
-class ImgGetter {
+namespace FSI;
+
+public class ImgGetter {
     private static readonly string[] imgExts = {
         "jpeg", "jpg", "jfif", "png", "webp", "bmp", "tiff", "tif", "avif",
     };
 
-    private static string[] FilterImgPaths(string[] filePaths) {
+    public static string[] FilterImgPaths(string[] filePaths) {
         var imgPaths = filePaths
             .Where(path => imgExts.Any(ext => Path.GetExtension(path)?.ToLower() == "." + ext))
             .ToArray();
