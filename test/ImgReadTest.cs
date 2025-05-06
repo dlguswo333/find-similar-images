@@ -17,4 +17,28 @@ public class ImgReadTest
         var results = FSI.ImgGetter.FilterImgPaths(inputs);
         Assert.Empty(results);
     }
+
+    [Fact]
+    public void ReadImg1()
+    {
+        var cwd = Directory.GetCurrentDirectory();
+        var jpgPath = $"{cwd.Split("find-similar-images")[0]}/find-similar-images/test/images/foxes.jpg";
+        Assert.True(File.Exists(jpgPath));
+        // [TODO] Rather than calling cv2 directly call from FSI.
+        var results = OpenCvSharp.Cv2.ImRead(jpgPath, OpenCvSharp.ImreadModes.Color);
+        Assert.Equal(1204, results.Width);
+        Assert.Equal(800, results.Height);
+    }
+
+    [Fact]
+    public void ReadImg2()
+    {
+        var cwd = Directory.GetCurrentDirectory();
+        var avifPath = $"{cwd.Split("find-similar-images")[0]}/find-similar-images/test/images/foxes.avif";
+        Assert.True(File.Exists(avifPath));
+        // [TODO] Rather than calling cv2 directly call from FSI.
+        var results = OpenCvSharp.Cv2.ImRead(avifPath, OpenCvSharp.ImreadModes.Color);
+        Assert.Equal(1204, results.Width);
+        Assert.Equal(800, results.Height);
+    }
 }
