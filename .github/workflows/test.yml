@@ -4,7 +4,7 @@ on:
   push:
     branches:
       # [TODO] Changes it to run less frequently.
-      - *
+      - '*'
 
   workflow_dispatch:
 
