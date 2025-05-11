@@ -5,6 +5,10 @@ on:
     branches:
       # [TODO] Changes it to run less frequently.
       - '*'
+      - 'main'
+  pull_request:
+    branches:
+      - 'main'
 
   workflow_dispatch:
 
