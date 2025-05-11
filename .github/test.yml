@@ -1,0 +1,27 @@
+name: dotnet Test
+
+on:
+  push:
+    branches:
+      # [TODO] Changes it to run less frequently.
+      - *
+
+  workflow_dispatch:
+
+jobs:
+  dotnet-test:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6'
+
+      - name: Restore dependencies
+        run: dotnet restore
+
+      - name: Run tests
+        run: dotnet test
