@@ -23,8 +23,13 @@ jobs:
         with:
           dotnet-version: '6'
 
+      - name: Download custom opencvsharp runtime nupkg
+        run: |
+          mkdir -p packages/
+          curl -L -o packages/OpenCvSharp4.runtime.win.4.9.0.20240103.nupkg https://github.com/dlguswo333/opencvsharp/releases/download/4.9.0.20240106/OpenCvSharp4.runtime.win.4.9.0.20240103.nupkg
+
       - name: Restore dependencies
-        run: dotnet restore
+        run: dotnet restore --source packages/ --source https://api.nuget.org/v3/index.json
 
       - name: Run tests
         run: dotnet test
