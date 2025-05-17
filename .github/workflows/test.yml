@@ -31,7 +31,9 @@ jobs:
       - name: Restore dependencies
         # Specifying sources with remote url first doesn't work?
         # https://github.com/NuGet/Home/issues/7413
-        run: dotnet restore --source https://api.nuget.org/v3/index.json --source packages/
+        run: |
+          dotnet nuget locals all --clear
+          dotnet restore --source https://api.nuget.org/v3/index.json --source packages/
 
       - name: Run tests
         # Restoring here will overwrite the custom nupkg.
