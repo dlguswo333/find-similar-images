@@ -34,4 +34,5 @@ jobs:
         run: dotnet restore --source https://api.nuget.org/v3/index.json --source packages/
 
       - name: Run tests
-        run: dotnet test
+        # Restoring here will overwrite the custom nupkg.
+        run: dotnet test --no-restore
