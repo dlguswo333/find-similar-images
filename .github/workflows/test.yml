@@ -27,6 +27,7 @@ jobs:
         run: |
           mkdir -p packages/
           curl -L -o packages/OpenCvSharp4.runtime.win.4.9.0.20240103.nupkg https://github.com/dlguswo333/opencvsharp/releases/download/4.9.0.20240106/OpenCvSharp4.runtime.win.4.9.0.20240103.nupkg
+          ls packages/
 
       - name: Restore dependencies
         # Specifying sources with remote url first doesn't work?
