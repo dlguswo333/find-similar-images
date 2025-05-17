@@ -8,6 +8,8 @@
     <Nullable>enable</Nullable>
     <Version>1.3.0</Version>
     <Authors>dlguswo333</Authors>
+    <!-- Place custom opencvsharp nupkg files in 'packages' folder. -->
+    <RestoreSources>$(RestoreSources);./packages/;https://api.nuget.org/v3/index.json;</RestoreSources>
   </PropertyGroup>
 
   <ItemGroup>
