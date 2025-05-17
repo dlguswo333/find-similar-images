@@ -2,6 +2,13 @@ namespace test;
 
 public class ImgReadTest
 {
+    private string TestImgFolderPath {
+        get {
+            var cwd = Directory.GetCurrentDirectory();
+            return $"{cwd[..(cwd.LastIndexOf("find-similar-images") - 1)]}/find-similar-images/test/images/";
+        }
+    }
+
     [Fact]
     public void FilterImgPaths1()
     {
@@ -21,8 +28,7 @@ public class ImgReadTest
     [Fact]
     public void ReadImg1()
     {
-        var cwd = Directory.GetCurrentDirectory();
-        var jpgPath = $"{cwd[..(cwd.LastIndexOf("find-similar-images") - 1)]}/find-similar-images/test/images/foxes.jpg";
+        var jpgPath = Path.Join([TestImgFolderPath, "foxes.jpg"]);
         Assert.True(File.Exists(jpgPath));
         // [TODO] Rather than calling cv2 directly call from FSI.
         var results = OpenCvSharp.Cv2.ImRead(jpgPath, OpenCvSharp.ImreadModes.Color);
@@ -33,8 +39,7 @@ public class ImgReadTest
     [Fact]
     public void ReadImg2()
     {
-        var cwd = Directory.GetCurrentDirectory();
-        var avifPath = $"{cwd[..(cwd.LastIndexOf("find-similar-images") - 1)]}/find-similar-images/test/images/foxes.avif";
+        var avifPath = Path.Join([TestImgFolderPath, "foxes.avif"]);
         Assert.True(File.Exists(avifPath));
         // [TODO] Rather than calling cv2 directly call from FSI.
         var results = OpenCvSharp.Cv2.ImRead(avifPath, OpenCvSharp.ImreadModes.Color);
