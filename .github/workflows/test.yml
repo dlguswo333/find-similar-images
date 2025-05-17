@@ -3,9 +3,7 @@ name: dotnet Test
 on:
   push:
     branches:
-      # [TODO] Changes it to run less frequently.
-      - '*'
-      - 'main'
+      - 'master'
   pull_request:
     types: [opened, synchronize]
 
