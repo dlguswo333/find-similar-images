@@ -1,0 +1,41 @@
+name: dotnet Test
+
+on:
+  push:
+    branches:
+      # [TODO] Changes it to run less frequently.
+      - '*'
+      - 'main'
+  pull_request:
+    types: [opened, synchronize]
+
+  workflow_dispatch:
+
+jobs:
+  dotnet-test:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v3
+        with:
+          dotnet-version: '6'
+
+      - name: Download custom opencvsharp runtime nupkg
+        run: |
+          mkdir -p packages/
+          curl -L -o packages/OpenCvSharp4.runtime.win.4.9.0.20240103.nupkg https://github.com/dlguswo333/opencvsharp/releases/download/4.9.0.20240106/OpenCvSharp4.runtime.win.4.9.0.20240103.nupkg
+          ls packages/
+
+      - name: Restore dependencies
+        # Specifying sources with remote url first doesn't work?
+        # https://github.com/NuGet/Home/issues/7413
+        run: |
+          dotnet nuget locals all --clear
+          dotnet restore
+
+      - name: Run tests
+        # Restoring here will overwrite the custom nupkg.
+        run: dotnet test --no-restore
