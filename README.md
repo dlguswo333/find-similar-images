@@ -114,13 +114,19 @@ For that, you need to install OpencvSharp4.runtime.\* packages from the link.
 https://github.com/dlguswo333/opencvsharp/releases
 
 Download and install the nupkg files so that FSI uses the custom builds of OpencvSharp4.runtime.
-One of the ways to install from nupkg files is the following.
+There are several ways to make FSI depend on the custom runtime packages,
+but the first one is the most promising one while others do not work in a guranteed way.
 
-```shell
-dotnet tool install --global --add-source <path-to-your-nuget-package> <tool-name>
+The first method is to place the nupkg files in a directory and specify it as a source in the `csproj` file.
+Then dotnet and its CLI recognizes the packages while building, testing and etc.
+```xml
+<PropertyGroup>
+    <RestoreSources>$(RestoreSources);./packages/;https://api.nuget.org/v3/index.json;</RestoreSources>
+</PropertyGroup>
 ```
 
 Another way is to place the nupkg files and specify the folder path when restoring.
+But this one does not always work. Not promising.
 
 ```shell
 dotnet restore --source <path-to-your-nuget-package> --source https://api.nuget.org/v3/index.json
