@@ -28,22 +28,22 @@ public class ImgReadTest
     [Fact]
     public void ReadImg1()
     {
-        var jpgPath = Path.Join([TestImgFolderPath, "foxes.jpg"]);
+        var jpgPath = Path.Join([TestImgFolderPath, "shapes0.jpg"]);
         Assert.True(File.Exists(jpgPath));
         // [TODO] Rather than calling cv2 directly call from FSI.
         var results = OpenCvSharp.Cv2.ImRead(jpgPath, OpenCvSharp.ImreadModes.Color);
-        Assert.Equal(1204, results.Width);
+        Assert.Equal(800, results.Width);
         Assert.Equal(800, results.Height);
     }
 
     [Fact]
     public void ReadImg2()
     {
-        var avifPath = Path.Join([TestImgFolderPath, "foxes.avif"]);
+        var avifPath = Path.Join([TestImgFolderPath, "shapes0.avif"]);
         Assert.True(File.Exists(avifPath));
         // [TODO] Rather than calling cv2 directly call from FSI.
         var results = OpenCvSharp.Cv2.ImRead(avifPath, OpenCvSharp.ImreadModes.Color);
-        Assert.Equal(1204, results.Width);
+        Assert.Equal(800, results.Width);
         Assert.Equal(800, results.Height);
     }
 }

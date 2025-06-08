@@ -10,12 +10,12 @@ public class SimilarityTest
     }
 
     private static void CompareIdenticalImgs(FSI.IComparator comparator) {
-        var jpgPath = Path.Join([TestImgFolderPath, "foxes.jpg"]);
-        var avifPath = Path.Join([TestImgFolderPath, "foxes.avif"]);
-        Assert.True(File.Exists(jpgPath));
-        Assert.True(File.Exists(avifPath));
+        var img1Path = Path.Join([TestImgFolderPath, "shapes0.jpg"]);
+        var img2Path = Path.Join([TestImgFolderPath, "shapes0.avif"]);
+        Assert.True(File.Exists(img1Path));
+        Assert.True(File.Exists(img2Path));
 
-        var imgs = FSI.MainProgram.ReadAndProcessImgs([jpgPath, avifPath], comparator.ProcessImg);
+        var imgs = FSI.MainProgram.ReadAndProcessImgs([img1Path, img2Path], comparator.ProcessImg);
         var similarity = comparator.Compare(imgs[0], imgs[1]);
         Assert.True(comparator.IsSimilar(similarity, FSI.Thresholds.high));
     }
