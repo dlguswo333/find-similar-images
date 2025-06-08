@@ -9,7 +9,7 @@ public enum Thresholds {
     high
 }
 
-class MainProgram {
+public class MainProgram {
     const string defaultComparator = "mse";
     private static string homeDirectory = string.Empty;
 
@@ -165,10 +165,11 @@ class MainProgram {
         return false;
     }
 
+    // [TODO] Refactor it into a separate class.
     /// <summary>
     /// Read images located at imgPaths array and process the images.
     /// </summary>
-    private static Mat[] ReadAndProcessImgs(string[] imgPaths, Func<Mat, Mat> processImg) {
+    public static Mat[] ReadAndProcessImgs(string[] imgPaths, Func<Mat, Mat> processImg) {
         var imgs = new Mat[imgPaths.Length];
         for (int i = 0; i < imgPaths.Length; ++i) {
             try {
