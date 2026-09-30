@@ -6,6 +6,11 @@ The program is inspired and influenced by [difPy][difPy].
 
 The program uses [libavif][libavif] for reading avif image files.
 
+## Third-party licenses
+
+License copies for third-party components, including libavif, are in
+[licenses](licenses/).
+
 ## Features
 - Set various options through arguments.
 - Recursive image file search in subdirectory.

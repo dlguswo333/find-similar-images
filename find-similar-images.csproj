@@ -22,4 +22,12 @@
     <None Remove="test/**" />
   </ItemGroup>
 
+  <!-- Keep third-party notices with build and publish output.
+       These files do not replace native-library source distribution obligations. -->
+  <ItemGroup>
+    <None Update="licenses/**/*"
+          CopyToOutputDirectory="PreserveNewest"
+          CopyToPublishDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>
